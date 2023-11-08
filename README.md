@@ -96,13 +96,6 @@ CCC = Days Inventory Outstanding (DIO) + Days Sales Outstanding (DSO) − Days P
 #### 2.1.3. Rule C. 获利能力
 - R.C1 [MUST] 营业毛利率 > 30%
   - 毛利率高低表明这是否是一门好生意
-  - 如果毛利率太低，那说明这门生意不好赚钱
-- R.C2 [MUST] 营业利润率 > 20%
-- R.C3 [NTH] 经营安全边际率 > 60%
-- R.C4 [MUST] 净利率 > 5%，没有下降趋势
-- R.C5 [MUST] 每股收益 > 0，没有下降趋势
-- R.C6 [MUST] 股本回报率 > 20%
-
 
 #### 2.1.4. Rule D. 财务结构
   - R.D1 [MUST] 资产负债率 < 60%
