@@ -1,7 +1,7 @@
 # <center>Jimmy's Stock Analysis</center> <!-- omit in toc -->
 
 ## 1. 财务指标定义 (Definition)
-### 1.1. 现金流动负债比率 (Cach Flow Ratio)
+### 1.1. 现金流动负债比率 (Cash Flow Ratio)
 ```math
 现金流动负债比率 = \frac{营业活动净现金流量}{流动负债}
 ```
@@ -15,7 +15,7 @@
 ```
 其中，营运资金是流动资产减去流动负债之后的余额。
 
-### 1.4. 现金占总资产比率 (%)
+### 1.4. 现金占总资产比率 (Cash to Total Assets Ratio)
 ```math
 现金占总资产比率 = \frac{货币资金+交易性金融资产}{总资产}
 ```
