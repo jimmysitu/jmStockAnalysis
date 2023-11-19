@@ -5,24 +5,55 @@ import numpy as np
 from optparse import OptionParser
 
 class AnalysisBase:
+    '''
+    对单一股票的分析基类，获取原始数据，计算各种指标
+    '''
     def __init__(self, database, ticker, exchange=None):
         self.db = sqlite3.connect(database)
 
         query = f"SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'aapl%'"
-        self.tables = pd.read_sql_query(query, self.db)
+        tables = pd.read_sql_query(query, self.db)
 
-        for table in self.tables['name']:
-            print(table)
+        for table_name in tables['name']:
+            query = f"SELECT * FROM {table_name}"
 
-    def cash_flow_ratio(self, ticker, exchange):
+            # 保存三大财报原始数据，DataFrame
+            if 'income_statement' in table_name:
+                self.income_statement = pd.read_sql_query(query, self.db)
+            elif 'balance_sheet' in table_name:
+                self.balance_sheet = pd.read_sql_query(query, self.db)
+            elif 'cash_flow' in table_name:
+                self.cash_flow = pd.read_sql_query(query, self.db)
+
+            # 其他估值数据
+        
+        header = self.cash_flow.loc[0][0]
+        if ('Cash Flow from Operating Activities, Indirect' == header):
+            self.operating_cash_flow = self.cash_flow.loc[0][1:-2]
+        else:
+            raise ValueError("Operating cash flow is not found")
+
+        header = self.balance_sheet.loc[46][0]
+        if ('    Total Current Liabilities' == header):
+            self.current_liabilities = self.balance_sheet.loc[0][1:-1]
+        else:
+            raise ValueError("Current liabilities is not found")
+
+    def cash_flow_ratio(self):
         '''
         现金流动负债比率
         Cash Flow Ratio = Operating Cash Flow / Current Liabilities
 
-        Args:
+        Args: None
         Returns:
         '''
-        pass
+        self.cash_flow_ratio = self.operating_cash_flow / self.current_liabilities
+        print(self.operating_cash_flow) 
+        print(self.current_liabilities)
+        print(self.cash_flow_ratio)
+        return self.cash_flow_ratio
+
+         
 
     def cash_flow_adequancy_ratio(self, ticker):
         '''
@@ -55,6 +86,7 @@ def main():
     (opts, args) = parser.parse_args()
 
     ticker_analysis = AnalysisBase(opts.database, opts.ticker)
+    ticker_analysis.cash_flow_ratio()
 
 
 if __name__ == '__main__':
