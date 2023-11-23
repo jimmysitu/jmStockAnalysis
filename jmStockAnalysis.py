@@ -11,33 +11,35 @@ class AnalysisBase:
     def __init__(self, database, ticker, exchange=None):
         self.db = sqlite3.connect(database)
 
-        query = f"SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'aapl%'"
+        query = f"SELECT name FROM sqlite_master WHERE type='table' AND name LIKE '{ticker}%'"
         tables = pd.read_sql_query(query, self.db)
 
         for table_name in tables['name']:
-            query = f"SELECT * FROM {table_name}"
+            query = f"SELECT * FROM '{table_name}'"
 
             # 保存三大财报原始数据，DataFrame
-            if 'income_statement' in table_name:
+            if 'income_statement_' in table_name:
                 self.income_statement = pd.read_sql_query(query, self.db)
-            elif 'balance_sheet' in table_name:
+            elif 'balance_sheet_' in table_name:
                 self.balance_sheet = pd.read_sql_query(query, self.db)
-            elif 'cash_flow' in table_name:
+            elif 'cash_flow_' in table_name:
                 self.cash_flow = pd.read_sql_query(query, self.db)
 
             # 其他估值数据
-        
-        header = self.cash_flow.loc[0][0]
-        if ('Cash Flow from Operating Activities, Indirect' == header):
-            self.operating_cash_flow = self.cash_flow.loc[0][1:-2]
-        else:
-            raise ValueError("Operating cash flow is not found")
 
-        header = self.balance_sheet.loc[46][0]
-        if ('    Total Current Liabilities' == header):
-            self.current_liabilities = self.balance_sheet.loc[0][1:-1]
-        else:
-            raise ValueError("Current liabilities is not found")
+        # 提取财报原始数据
+        # Balance sheet 
+        for i in range(self.balance_sheet.shape[0]):
+            header = self.balance_sheet.loc[i][0]
+            if ('Total Current Liabilities' in header):
+                self.current_liabilities = self.balance_sheet.loc[i][1:-1]
+
+        # Cash flow 
+        for i in range(self.cash_flow.shape[0]):
+            header = self.cash_flow.loc[i][0]
+            if ('Cash Flow from Operating Activities, Indirect' in header):
+                self.operating_cash_flow = self.cash_flow.loc[i][1:-2]
+
 
     def cash_flow_ratio(self):
         '''
@@ -46,22 +48,26 @@ class AnalysisBase:
 
         Args: None
         Returns:
+            Cash flow ratio 
         '''
         self.cash_flow_ratio = self.operating_cash_flow / self.current_liabilities
-        print(self.operating_cash_flow) 
-        print(self.current_liabilities)
-        print(self.cash_flow_ratio)
         return self.cash_flow_ratio
 
          
 
     def cash_flow_adequancy_ratio(self, ticker):
         '''
+        现金流量允当比率
+        Cash Flow Adequancy Ratio = 
+            (5yrs Operating Cash Flow) / (5yrs Captial Expenditures + 5yrs Debt Repayments + 5yrs Dividends Paid)
         '''
         pass
 
     def cash_reinvestment_ratio(self, ticker):
         '''
+        现金再投资比率
+        Cash Re-investment Ratio =
+            (Operationg Cash Flow - Dividends Paid) / ()
         '''
         pass
 
@@ -86,7 +92,7 @@ def main():
     (opts, args) = parser.parse_args()
 
     ticker_analysis = AnalysisBase(opts.database, opts.ticker)
-    ticker_analysis.cash_flow_ratio()
+    print(ticker_analysis.cash_flow_ratio())
 
 
 if __name__ == '__main__':
