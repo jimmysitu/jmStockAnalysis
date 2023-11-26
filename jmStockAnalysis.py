@@ -31,12 +31,13 @@ class AnalysisBase:
         # Balance sheet 
         for i in range(self.balance_sheet.shape[0]):
             header = self.balance_sheet.loc[i][0]
-            if ('    Total Current Liabilities' in header):
+            if ('Total Assets' in header):
+                self.total_assets = self.balance_sheet.loc[i][1:-1]
+            elif ('    Total Current Liabilities' in header):
                 self.current_liabilities = self.balance_sheet.loc[i][1:-1]
             elif ('        Inventories' in header):
                 self.inventories = self.balance_sheet.loc[i][1:-1]
-                self.inventories_increase = self.inventories[-1] - self.inventories[0]
-
+                self.inventories_increase = self.inventories[-1] - self.inventories[-5]
 
         # Cash flow 
         for i in range(self.cash_flow.shape[0]):
@@ -45,16 +46,15 @@ class AnalysisBase:
                 self.operating_cash_flow = self.cash_flow.loc[i][1:-2]
             elif ('Cash Flow from Investing Activities' in header):
                 self.investing_cash_flow = self.cash_flow.loc[i][1:-2]
-            elif ('            Purchase of Property, Plant and Equipment' in header):
+            elif ('        Purchase/Sale and Disposal of Property, Plant and Equipment, Net' in header):
                 self.capital_expenditures = self.cash_flow.loc[i][1:-2]
             elif ('                Repayments for Short Term Debt' in header):
                 self.st_debt_repayments = self.cash_flow.loc[i][1:-2]
             elif ('                Repayments for Long Term Debt' in header):
                 self.lt_debt_repayments = self.cash_flow.loc[i][1:-2]
-            elif ('            Cash Dividends Paid' in header):
+            elif ('        Cash Dividends and Interest Paid' in header):
                 self.dividends_paid = self.cash_flow.loc[i][1:-2]
 
-        self.debt_repayments = self.st_debt_repayments + self.lt_debt_repayments
 
 
     def cash_flow_ratio(self):
@@ -77,14 +77,11 @@ class AnalysisBase:
         现金流量允当比率
         Cash Flow Adequancy Ratio = 
             (5yrs Operating Cash Flow) / 
-            (5yrs Captial Expenditures + 5yrs Debt Repayments + 5yrs Dividends Paid)
+            (5yrs Captial Expenditures + 5yrs Inventories Increase + 5yrs Dividends Paid)
         '''
         self.cash_flow_adequancy_ratio \
             = self.operating_cash_flow.sum() \
-                / (-self.capital_expenditures.sum() - self.lt_debt_repayments.sum() - self.dividends_paid.sum())
-#        self.cash_flow_adequancy_ratio \
-#            = self.operating_cash_flow.sum() \
-#                / (-self.investing_cash_flow.sum() + self.inventories_increase - self.dividends_paid.sum())
+                / (-self.capital_expenditures.sum() + self.inventories_increase - self.dividends_paid.sum())
         
         return self.cash_flow_adequancy_ratio
 
@@ -92,11 +89,15 @@ class AnalysisBase:
         '''
         现金再投资比率
         Cash Re-investment Ratio =
-            (Operating Cash Flow - Dividends Paid) / ()
+            (Operating Cash Flow - Dividends Paid) / (Total Assets - Current Liabilites)
         '''
-        pass
+        self.cash_reinvestment_ratio \
+            = (self.operating_cash_flow + self.dividends_paid) \
+                / (self.total_assets - self.current_liabilities)
 
-    def cash_to_total_assets_ratio(self, ticker):
+        return self.cash_reinvestment_ratio     
+
+    def cash_to_total_assets_ratio(self):
         '''
         '''
         pass
@@ -119,6 +120,7 @@ def main():
     ticker_analysis = AnalysisBase(opts.database, opts.ticker)
     print(ticker_analysis.cash_flow_ratio())
     print(ticker_analysis.cash_flow_adequancy_ratio())
+    print(ticker_analysis.cash_reinvestment_ratio())
 
 
 if __name__ == '__main__':
