@@ -38,6 +38,8 @@ class AnalysisBase:
             elif ('        Inventories' in header):
                 self.inventories = self.balance_sheet.loc[i][1:-1]
                 self.inventories_increase = self.inventories[-1] - self.inventories[-5]
+            elif ('            Cash and Cash Equivalents' in header):
+                self.cash_and_cash_equivalents = self.balance_sheet.loc[i][1:-1]
 
         # Cash flow 
         for i in range(self.cash_flow.shape[0]):
@@ -99,10 +101,14 @@ class AnalysisBase:
 
     def cash_to_total_assets_ratio(self):
         '''
+        现金与约当现金比率
+        Cash to Total Assets Ratio =
+            Cash and Cash Equivalents / Total Assets
         '''
-        pass
+        self.cash_to_total_assets_ratio \
+            = self.cash_and_cash_equivalents / self.total_assets
 
-
+        return self.cash_to_total_assets_ratio
 
 
 def main():
@@ -121,6 +127,7 @@ def main():
     print(ticker_analysis.cash_flow_ratio())
     print(ticker_analysis.cash_flow_adequancy_ratio())
     print(ticker_analysis.cash_reinvestment_ratio())
+    print(ticker_analysis.cash_to_total_assets_ratio())
 
 
 if __name__ == '__main__':
