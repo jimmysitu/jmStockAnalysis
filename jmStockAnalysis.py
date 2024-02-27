@@ -26,6 +26,12 @@ class AnalysisBase:
                 self.cash_flow = pd.read_sql_query(query, self.db)
 
             # 其他估值数据
+            elif '_growth' in table_name:
+                self.growth = pd.read_sql_query(query, self.db)
+            elif '_financial_health' in table_name:
+                self.financial_health = pd.read_sql_query(query, self.db)
+            elif '_operating_and_efficiency' in table_name:
+                self.operating_and_efficiency = pd.read_sql_query(query, self.db)
 
         # 提取财报原始数据
         # Balance sheet 
@@ -57,6 +63,15 @@ class AnalysisBase:
             elif ('        Cash Dividends and Interest Paid' in header):
                 self.dividends_paid = self.cash_flow.loc[i][1:-2]
 
+        # Operating and efficiency
+        for i in range(self.operating_and_efficiency.shape[0]):
+            header = self.operating_and_efficiency.loc[i][0]
+            if ('Days Sales Outstanding' in header):
+                self.days_sales_outstanding = self.operating_and_efficiency[i][1:-3]
+            elif ('Days Inventory' in header):
+                self.days_inventory_outstanding = self.operating_and_efficiency[i][1:-3]
+            elif ('Payables Period' in header):
+                self.days_payables_outstanding = self.operating_and_efficiency[i][1:-3]
 
 
     def cash_flow_ratio(self):
@@ -109,7 +124,44 @@ class AnalysisBase:
             = self.cash_and_cash_equivalents / self.total_assets
 
         return self.cash_to_total_assets_ratio
+    
 
+    def days_sales_outstanding(self):
+        '''
+        平均收现天数，直接从财务数据中获取
+        Days Sales Outstanding = 365 / Receivables Turnover
+        '''
+        return self.days_sales_outstanding
+
+    def days_inventory_outstanding(self):
+        '''
+        平均销货日数，直接从财务数据中获取
+        '''
+        return self.days_inventory_outstanding
+
+    def days_payables_outstanding(self):
+        '''
+        应付账款日数，直接从财务数据中获取
+        '''
+        return self.days_payables_outstanding
+
+    def cash_conversion_cycle(self):
+        '''
+        现金转换周期
+        Cash Coversion Cycle = \
+            Days Inventory Outstanding (DIO) + Days Sales Outstanding (DSO) − Days Payables Outstanding (DPO)
+        '''
+        self.cash_conversion_cycle = \
+            self.days_inventory_outstanding + self.days_sales_outstanding - self.days_payables_outstanding
+        return self.cash_conversion_cycle
+            
+    def operating_cycle(self):
+        '''
+        生意完整周期
+        Operating Cycle = DIO + DSO
+        '''
+        self.operating_cycle = self.days_inventory_outstanding + self.days_sales_outstanding
+        return self.operating_cycle
 
 def main():
     parser = OptionParser()

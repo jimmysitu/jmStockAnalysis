@@ -35,7 +35,7 @@
 
 ### 1.8. 现金转换周期 (Cash Conversion Cycle, CCC)
 ```math
-CCC = Days Inventory Outstanding (DIO) + Days Sales Outstanding (DSO) − Days Payables Outstanding (DPO)
+现金转换周期（CCC） = Days Inventory Outstanding (DIO) + Days Sales Outstanding (DSO) − Days Payables Outstanding (DPO)
 ```
 
 ### 1.9. 生意完整周期 (Operating Cycle)
