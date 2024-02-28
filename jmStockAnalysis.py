@@ -67,14 +67,14 @@ class AnalysisBase:
         for i in range(self.operating_and_efficiency.shape[0]):
             header = self.operating_and_efficiency.loc[i][0]
             if ('Days Sales Outstanding' in header):
-                self.days_sales_outstanding = self.operating_and_efficiency[i][1:-3]
+                self.days_sales_outstanding = self.operating_and_efficiency.loc[i][1:-3]
             elif ('Days Inventory' in header):
-                self.days_inventory_outstanding = self.operating_and_efficiency[i][1:-3]
+                self.days_inventory_outstanding = self.operating_and_efficiency.loc[i][1:-3]
             elif ('Payables Period' in header):
-                self.days_payables_outstanding = self.operating_and_efficiency[i][1:-3]
+                self.days_payables_outstanding = self.operating_and_efficiency.loc[i][1:-3]
 
 
-    def cash_flow_ratio(self):
+    def get_cash_flow_ratio(self):
         '''
         现金流动负债比率
         Cash Flow Ratio = Operating Cash Flow / Current Liabilities
@@ -89,7 +89,7 @@ class AnalysisBase:
 
          
 
-    def cash_flow_adequancy_ratio(self):
+    def get_cash_flow_adequancy_ratio(self):
         '''
         现金流量允当比率
         Cash Flow Adequancy Ratio = 
@@ -102,7 +102,7 @@ class AnalysisBase:
         
         return self.cash_flow_adequancy_ratio
 
-    def cash_reinvestment_ratio(self):
+    def get_cash_reinvestment_ratio(self):
         '''
         现金再投资比率
         Cash Re-investment Ratio =
@@ -114,7 +114,7 @@ class AnalysisBase:
 
         return self.cash_reinvestment_ratio     
 
-    def cash_to_total_assets_ratio(self):
+    def get_cash_to_total_assets_ratio(self):
         '''
         现金与约当现金比率
         Cash to Total Assets Ratio =
@@ -125,27 +125,26 @@ class AnalysisBase:
 
         return self.cash_to_total_assets_ratio
     
-
-    def days_sales_outstanding(self):
+    def get_days_sales_outstanding(self):
         '''
         平均收现天数，直接从财务数据中获取
         Days Sales Outstanding = 365 / Receivables Turnover
         '''
         return self.days_sales_outstanding
 
-    def days_inventory_outstanding(self):
+    def get_days_inventory_outstanding(self):
         '''
         平均销货日数，直接从财务数据中获取
         '''
         return self.days_inventory_outstanding
 
-    def days_payables_outstanding(self):
+    def get_days_payables_outstanding(self):
         '''
         应付账款日数，直接从财务数据中获取
         '''
         return self.days_payables_outstanding
 
-    def cash_conversion_cycle(self):
+    def get_cash_conversion_cycle(self):
         '''
         现金转换周期
         Cash Coversion Cycle = \
@@ -155,7 +154,7 @@ class AnalysisBase:
             self.days_inventory_outstanding + self.days_sales_outstanding - self.days_payables_outstanding
         return self.cash_conversion_cycle
             
-    def operating_cycle(self):
+    def get_operating_cycle(self):
         '''
         生意完整周期
         Operating Cycle = DIO + DSO
@@ -176,10 +175,15 @@ def main():
     (opts, args) = parser.parse_args()
 
     ticker_analysis = AnalysisBase(opts.database, opts.ticker)
-    print(ticker_analysis.cash_flow_ratio())
-    print(ticker_analysis.cash_flow_adequancy_ratio())
-    print(ticker_analysis.cash_reinvestment_ratio())
-    print(ticker_analysis.cash_to_total_assets_ratio())
+    print("cash_flow_ratio:\n",             ticker_analysis.get_cash_flow_ratio())
+    print("cash_flow_adequancy_ratio:\n",   ticker_analysis.get_cash_flow_adequancy_ratio())
+    print("cash_reinvestment_ratio:\n",     ticker_analysis.get_cash_reinvestment_ratio())
+    print("cash_to_total_assets_ratio:\n",  ticker_analysis.get_cash_to_total_assets_ratio())
+    print("days_sales_outstanding:\n",      ticker_analysis.get_days_sales_outstanding())
+    print("days_inventory_outstanding:\n",  ticker_analysis.get_days_inventory_outstanding())
+    print("days_payables_outstanding:\n",   ticker_analysis.get_days_payables_outstanding())
+    print("cash_conversion_cycle:\n",       ticker_analysis.get_cash_conversion_cycle())
+    print("operating_cycle:\n",             ticker_analysis.get_operating_cycle())
 
 
 if __name__ == '__main__':
