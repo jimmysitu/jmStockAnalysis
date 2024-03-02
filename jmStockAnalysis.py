@@ -34,6 +34,12 @@ class AnalysisBase:
                 self.operating_and_efficiency = pd.read_sql_query(query, self.db)
 
         # 提取财报原始数据
+        # Income statement
+        for i in range(self.income_statement.shape[0]):
+            header = self.income_statement.loc[i][0]
+            if ('Basic EPS' in header):
+                self.basic_eps = self.income_statement.loc[i][1:-2]
+
         # Balance sheet 
         for i in range(self.balance_sheet.shape[0]):
             header = self.balance_sheet.loc[i][0]
@@ -46,6 +52,18 @@ class AnalysisBase:
                 self.inventories_increase = self.inventories[-1] - self.inventories[-5]
             elif ('            Cash and Cash Equivalents' in header):
                 self.cash_and_cash_equivalents = self.balance_sheet.loc[i][1:-1]
+            elif ('Total Liabilities' in header):
+                self.total_liabilities = self.balance_sheet.loc[i][1:-1]
+            elif ('Total Equity' in header):
+                self.total_equity = self.balance_sheet.loc[i][1:-1]
+            elif ('    Total Non-Current Liabilities' in header):
+                self.total_noncurrent_liabilities = self.balance_sheet.loc[i][1:-1]
+            elif ('    Total Non-Current Assets' in header):
+                self.total_noncurrent_assets = self.balance_sheet.loc[i][1:-1]
+            elif ('        Net Property, Plant and Equipment' in header):
+                self.net_ppe = self.balance_sheet.loc[i][1:-1]
+            elif ('        Total Long Term Investments' in header):
+                self.total_long_term_investments = self.balance_sheet.loc[i][1:-1]
 
         # Cash flow 
         for i in range(self.cash_flow.shape[0]):
@@ -72,6 +90,23 @@ class AnalysisBase:
                 self.days_inventory_outstanding = self.operating_and_efficiency.loc[i][1:-3]
             elif ('Payables Period' in header):
                 self.days_payables_outstanding = self.operating_and_efficiency.loc[i][1:-3]
+            elif ('Asset Turnover' in header):
+                self.asset_turnover = self.operating_and_efficiency.loc[i][1:-3]
+            elif ('Gross Margin %' in header):
+                self.gross_margin = self.operating_and_efficiency.loc[i][1:-3]
+            elif ('Operating Margin %' in header):
+                self.operating_margin = self.operating_and_efficiency.loc[i][1:-3]
+            elif ('Net Margin %' in header):
+                self.net_margin = self.operating_and_efficiency.loc[i][1:-3]
+            elif ('Return on Equity %' in header):
+                self.return_on_equity = self.operating_and_efficiency.loc[i][1:-3]
+
+        for i in range(self.financial_health.shape[0]):
+            header = self.financial_health.loc[i][0]
+            if ('Current Ratio' in header):
+                self.current_ratio = self.financial_health.loc[i][1:-3]
+            elif ('Quick Ratio' in header):
+                self.quick_ratio = self.financial_health.loc[i][1:-3]
 
 
     def get_cash_flow_ratio(self):
@@ -162,6 +197,81 @@ class AnalysisBase:
         self.operating_cycle = self.days_inventory_outstanding + self.days_sales_outstanding
         return self.operating_cycle
 
+    def get_asset_turnover(self):
+        '''
+        资产周转率，直接从财务数据中获取
+        '''
+        return self.asset_turnover
+
+    def get_gross_margin(self):
+        '''
+        营业毛利率，直接从财务数据中获取
+        '''
+        return self.gross_margin
+    
+
+    def get_operating_margin(self):
+        '''
+        营业利润率，直接从财务数据中获取
+        '''
+        return self.operating_margin
+    
+    def get_operation_safety_margin(self):
+        '''
+        营业安全边际率
+        Operation Safety Margin = Operating Margin / Gross Margin
+        '''
+        self.operation_safety_margin = self.operating_margin / self.gross_margin
+        return  self.operation_safety_margin
+
+    def get_net_margin(self):
+        '''
+        净利率，直接从财务数据中获取
+        '''
+        return self.net_margin
+    
+    def get_eps(self):
+        '''
+        每股收益，直接从财务数据中获取
+        '''
+        return self.basic_eps
+    
+    def get_roe(self):
+        '''
+        股本回报率，直接从财务数据中获取
+        '''
+        return self.return_on_equity
+    
+    def get_debt_ratio(self):
+        '''
+        资产负债率
+        Debt Ratio = Total Liabilities / Total Assets
+        '''
+        self.debt_ratio = self.total_liabilities / self.total_assets
+        return self.debt_ratio
+    
+    def get_fixed_assets_to_long_term_liabilities_ratio(self):
+        '''
+        长期资产合适率 = (所有者权益 + 长期负债) / (固定资产 + 长期投资) 
+        '''
+        self.fixed_assets_to_long_term_liabilities_ratio = \
+            (self.total_equity + self.total_noncurrent_liabilities) / \
+            (self.net_ppe + self.total_long_term_investments)
+
+    def get_current_ratio(self):
+        '''
+        流动比率，直接从财报数据中获取
+        '''
+        return self.current_ratio
+
+    def get_quick_ratio(self):
+        '''
+        速动比率，直接从财报数据中获取
+        '''
+        return self.quick_ratio
+
+
+
 def main():
     parser = OptionParser()
 
@@ -174,6 +284,7 @@ def main():
 
     (opts, args) = parser.parse_args()
 
+    # Temp test code
     ticker_analysis = AnalysisBase(opts.database, opts.ticker)
     print("cash_flow_ratio:\n",             ticker_analysis.get_cash_flow_ratio())
     print("cash_flow_adequancy_ratio:\n",   ticker_analysis.get_cash_flow_adequancy_ratio())
@@ -184,6 +295,18 @@ def main():
     print("days_payables_outstanding:\n",   ticker_analysis.get_days_payables_outstanding())
     print("cash_conversion_cycle:\n",       ticker_analysis.get_cash_conversion_cycle())
     print("operating_cycle:\n",             ticker_analysis.get_operating_cycle())
+    print("asset_turnover:\n",              ticker_analysis.get_asset_turnover())
+    print("gross_margin:\n",                ticker_analysis.get_gross_margin())
+    print("operating_margin:\n",            ticker_analysis.get_operating_margin())
+    print("operation_safety_margin:\n",     ticker_analysis.get_operation_safety_margin())
+    print("net_margin:\n",                  ticker_analysis.get_net_margin())
+    print("eps:\n",                         ticker_analysis.get_eps())
+    print("roe:\n",                         ticker_analysis.get_roe())
+    print("debt_ratio:\n",                  ticker_analysis.get_debt_ratio())
+    print("long_term_ratio:\n",             ticker_analysis.get_fixed_assets_to_long_term_liabilities_ratio())
+    print("current_ratio:\n",               ticker_analysis.get_current_ratio())
+    print("quick_ratio:\n",                 ticker_analysis.get_quick_ratio())
+
 
 
 if __name__ == '__main__':
