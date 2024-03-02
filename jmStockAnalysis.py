@@ -38,7 +38,7 @@ class AnalysisBase:
         for i in range(self.income_statement.shape[0]):
             header = self.income_statement.loc[i][0]
             if ('Basic EPS' in header):
-                self.basic_eps = self.income_statement.loc[i][1:-2]
+                self.basic_eps = self.income_statement.loc[i][1:-2].replace('-', 0)
 
         # Balance sheet 
         for i in range(self.balance_sheet.shape[0]):
@@ -85,19 +85,25 @@ class AnalysisBase:
         for i in range(self.operating_and_efficiency.shape[0]):
             header = self.operating_and_efficiency.loc[i][0]
             if ('Days Sales Outstanding' in header):
-                self.days_sales_outstanding = self.operating_and_efficiency.loc[i][1:-3]
+                s = self.operating_and_efficiency.loc[i][1:-3]
+                self.days_sales_outstanding = self.to_float64(s)
             elif ('Days Inventory' in header):
-                self.days_inventory_outstanding = self.operating_and_efficiency.loc[i][1:-3]
+                s = self.operating_and_efficiency.loc[i][1:-3]
+                self.days_inventory_outstanding = self.to_float64(s)
             elif ('Payables Period' in header):
-                self.days_payables_outstanding = self.operating_and_efficiency.loc[i][1:-3]
+                s = self.operating_and_efficiency.loc[i][1:-3].replace('-', 0)
+                self.days_payables_outstanding = self.to_float64(s)
             elif ('Asset Turnover' in header):
                 self.asset_turnover = self.operating_and_efficiency.loc[i][1:-3]
             elif ('Gross Margin %' in header):
-                self.gross_margin = self.operating_and_efficiency.loc[i][1:-3]
+                s = self.operating_and_efficiency.loc[i][1:-3]
+                self.gross_margin = self.to_float64(s)
             elif ('Operating Margin %' in header):
-                self.operating_margin = self.operating_and_efficiency.loc[i][1:-3]
+                s = self.operating_and_efficiency.loc[i][1:-3]
+                self.operating_margin = self.to_float64(s)
             elif ('Net Margin %' in header):
-                self.net_margin = self.operating_and_efficiency.loc[i][1:-3]
+                s= self.operating_and_efficiency.loc[i][1:-3]
+                self.net_margin = self.to_float64(s)
             elif ('Return on Equity %' in header):
                 self.return_on_equity = self.operating_and_efficiency.loc[i][1:-3]
 
@@ -108,6 +114,10 @@ class AnalysisBase:
             elif ('Quick Ratio' in header):
                 self.quick_ratio = self.financial_health.loc[i][1:-3]
 
+    def to_float64(self, series):
+        series = series.replace('-', 0)
+        series = series.astype(np.float64)
+        return series
 
     def get_cash_flow_ratio(self):
         '''
@@ -185,6 +195,9 @@ class AnalysisBase:
         Cash Coversion Cycle = \
             Days Inventory Outstanding (DIO) + Days Sales Outstanding (DSO) − Days Payables Outstanding (DPO)
         '''
+        print(self.days_inventory_outstanding)
+        print(self.days_sales_outstanding)
+        print(self.days_sales_outstanding.apply(type))
         self.cash_conversion_cycle = \
             self.days_inventory_outstanding + self.days_sales_outstanding - self.days_payables_outstanding
         return self.cash_conversion_cycle
