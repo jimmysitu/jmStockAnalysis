@@ -102,11 +102,13 @@ class AnalysisBase:
                 s = self.operating_and_efficiency.loc[i][1:-3]
                 self.operating_margin = self.to_float64(s)
             elif ('Net Margin %' in header):
-                s= self.operating_and_efficiency.loc[i][1:-3]
+                s = self.operating_and_efficiency.loc[i][1:-3]
                 self.net_margin = self.to_float64(s)
             elif ('Return on Equity %' in header):
-                self.return_on_equity = self.operating_and_efficiency.loc[i][1:-3]
+                s = self.operating_and_efficiency.loc[i][1:-3]
+                self.return_on_equity = self.to_float64(s)
 
+        # Financial Health
         for i in range(self.financial_health.shape[0]):
             header = self.financial_health.loc[i][0]
             if ('Current Ratio' in header):
