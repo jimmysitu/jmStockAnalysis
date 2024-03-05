@@ -104,12 +104,18 @@
   - R.D1 [MUST] 资产负债率 < 60%
   - R.D2 [MUST] 长期资产合适率 > 150%
 
-
 #### 2.1.5. Rule E. 尝债能力
   - R.E1 [MUST] 流动比率 > 300%
   - R.E2 [MUST] 速动比率 > 150%
   
-### 2.2. 买入规则
+### 2.2. 买入原则
 
-### 2.3. 卖出规则
+### 2.3. 卖出原则
+
+
+## TODO
+- [ ] Add github pages
+- [ ] Add script to generate analysis report
+- [ ] Generate SP500 analysis report
+- [ ] Generate HSI analysis report
 
