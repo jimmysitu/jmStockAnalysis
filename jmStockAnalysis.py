@@ -112,10 +112,34 @@ class AnalysisBase:
         for i in range(self.financial_health.shape[0]):
             header = self.financial_health.loc[i][0]
             if ('Current Ratio' in header):
-                self.current_ratio = self.financial_health.loc[i][1:-3]
+                self.current_ratio = self.financial_health.loc[i][1:-2]
+                self.current_ratio.index = self.current_ratio.index.str.replace(r'-..', '', regex=True)
             elif ('Quick Ratio' in header):
-                self.quick_ratio = self.financial_health.loc[i][1:-3]
+                self.quick_ratio = self.financial_health.loc[i][1:-2]
+                self.quick_ratio.index = self.quick_ratio.index.str.replace(r'-..', '', regex=True)
 
+        # Initial all ratio
+        self.get_cash_flow_ratio()
+        self.get_cash_flow_adequancy_ratio()
+        self.get_cash_reinvestment_ratio()
+        self.get_cash_to_total_assets_ratio()
+        self.get_days_sales_outstanding()
+        self.get_days_inventory_outstanding()
+        self.get_days_payables_outstanding()
+        self.get_cash_conversion_cycle()
+        self.get_operating_cycle()
+        self.get_asset_turnover()
+        self.get_gross_margin()
+        self.get_operating_margin()
+        self.get_operation_safety_margin()
+        self.get_net_margin()
+        self.get_eps()
+        self.get_roe()
+        self.get_debt_ratio()
+        self.get_fixed_assets_to_long_term_liabilities_ratio()
+        self.get_current_ratio()
+        self.get_quick_ratio()
+    
     def to_float64(self, series):
         series = series.replace('-', 0)
         series = series.astype(np.float64)
@@ -143,10 +167,12 @@ class AnalysisBase:
             (5yrs Operating Cash Flow) / 
             (5yrs Captial Expenditures + 5yrs Inventories Increase + 5yrs Dividends Paid)
         '''
-        self.cash_flow_adequancy_ratio \
-            = self.operating_cash_flow.sum() \
-                / (-self.capital_expenditures.sum() + self.inventories_increase - self.dividends_paid.sum())
-        
+        cash_flow_adequancy_ratio \
+            = self.operating_cash_flow[-5:].sum() \
+                / (-self.capital_expenditures[-5:].sum() + self.inventories_increase - self.dividends_paid[-5:].sum())
+
+        self.cash_flow_adequancy_ratio = pd.Series(index=self.operating_cash_flow.index) 
+        self.cash_flow_adequancy_ratio[-1] = cash_flow_adequancy_ratio
         return self.cash_flow_adequancy_ratio
 
     def get_cash_reinvestment_ratio(self):
@@ -181,13 +207,13 @@ class AnalysisBase:
 
     def get_days_inventory_outstanding(self):
         '''
-        平均销货日数，直接从财务数据中获取
+        平均销货天数，直接从财务数据中获取
         '''
         return self.days_inventory_outstanding
 
     def get_days_payables_outstanding(self):
         '''
-        应付账款日数，直接从财务数据中获取
+        应付账款天数，直接从财务数据中获取
         '''
         return self.days_payables_outstanding
 
@@ -197,9 +223,6 @@ class AnalysisBase:
         Cash Coversion Cycle = \
             Days Inventory Outstanding (DIO) + Days Sales Outstanding (DSO) − Days Payables Outstanding (DPO)
         '''
-        print(self.days_inventory_outstanding)
-        print(self.days_sales_outstanding)
-        print(self.days_sales_outstanding.apply(type))
         self.cash_conversion_cycle = \
             self.days_inventory_outstanding + self.days_sales_outstanding - self.days_payables_outstanding
         return self.cash_conversion_cycle
@@ -272,6 +295,7 @@ class AnalysisBase:
         self.fixed_assets_to_long_term_liabilities_ratio = \
             (self.total_equity + self.total_noncurrent_liabilities) / \
             (self.net_ppe + self.total_long_term_investments)
+        return self.fixed_assets_to_long_term_liabilities_ratio
 
     def get_current_ratio(self):
         '''
@@ -285,7 +309,93 @@ class AnalysisBase:
         '''
         return self.quick_ratio
 
+    def generate_report(self):
+        '''
+        生成财务分析报告
 
+        Args: None
+        Returns:
+            Analysis report, pandas.DataFrame
+        '''
+        self.report = pd.DataFrame()
+        self.report = pd.concat([self.report, self.cash_flow_ratio.rename('现金流动负债比率')], axis=1)
+        self.report = pd.concat([self.report, self.cash_flow_adequancy_ratio.rename('现金流量允当比率')], axis=1)
+        self.report = pd.concat([self.report, self.cash_reinvestment_ratio.rename('现金再投资比率')], axis=1)
+        self.report = pd.concat([self.report, self.cash_to_total_assets_ratio.rename('现金占总资产比率')], axis=1) 
+        self.report = pd.concat([self.report, self.days_sales_outstanding.rename('平均收现天数')], axis=1)
+        self.report = pd.concat([self.report, self.days_inventory_outstanding.rename('平均销货天数')], axis=1) 
+        self.report = pd.concat([self.report, self.days_payables_outstanding.rename('应付账款天数')], axis=1)
+        self.report = pd.concat([self.report, self.cash_conversion_cycle.rename('现金转换周期')], axis=1)
+        self.report = pd.concat([self.report, self.operating_cycle.rename('生意完整周期')], axis=1)
+        self.report = pd.concat([self.report, self.asset_turnover.rename('资产周转率')], axis=1)
+        self.report = pd.concat([self.report, self.gross_margin.rename('营业毛利率')], axis=1)
+        self.report = pd.concat([self.report, self.operating_margin.rename('营业利润率')], axis=1)
+        self.report = pd.concat([self.report, self.operation_safety_margin.rename('营业安全边际率')], axis=1)
+        self.report = pd.concat([self.report, self.net_margin.rename('净利率')], axis=1)
+        self.report = pd.concat([self.report, self.basic_eps.rename('每股收益')], axis=1)
+        self.report = pd.concat([self.report, self.return_on_equity.rename('股本回报率')], axis=1)
+        self.report = pd.concat([self.report, self.debt_ratio.rename('资产负债率')], axis=1)
+        self.report = pd.concat([self.report, self.fixed_assets_to_long_term_liabilities_ratio.rename('长期资产合适率')], axis=1)
+        self.report = pd.concat([self.report, self.current_ratio.rename('流动比率')], axis=1)
+        self.report = pd.concat([self.report, self.quick_ratio.rename('速动比率')], axis=1) 
+
+        self.report = self.report.sort_index()
+        self.report = self.report.transpose()
+        return self.report
+
+class CheckRules():
+    '''
+    对单一股票的数据进行合规分析，高亮有问题的数据
+    '''
+    def __init__(self, report):
+        self.report = report
+        self.rules = [
+            self.rule_a1#, rule_a2, rule_a3, rule_a4, rule_a5
+        ]
+
+    def rule_a1(self):
+        '''
+        R.A1 [MUST] 现金流动负债比率 > 100%
+        '''
+        self.report = self.report.style.applymap(
+            lambda x: 'color: red;' if x < 1 else 'color: blue;', subset=['现金流动负债比率'])
+
+    def rule_a2(self):
+        '''
+        R.A2 [MUST] 现金流量允当比率 > 100%
+        '''
+        pass
+    
+    def rule_a3(self):
+        '''
+        R.A3 [MUST] 现金再投资比率 > 10%
+        '''
+        pass
+
+    def rule_a4(self):
+        '''
+        R.A4 [MUST] 现金占总资产比率 10~25%
+        '''
+        pass
+
+    def rule_a5(self):
+        '''
+        R.A5 [MUST] 平均收现天数，没有增加的趋势
+        '''
+        pass
+
+    def check_all(self):
+        '''
+        应用所有分析规则
+
+        Args: None
+        Returns:
+            Report with abnormal data highlight, pandas.DataFrame.style
+        '''
+        for func in self.rules:
+            func()
+
+        return self.report
 
 def main():
     parser = OptionParser()
@@ -321,8 +431,14 @@ def main():
     print("long_term_ratio:\n",             ticker_analysis.get_fixed_assets_to_long_term_liabilities_ratio())
     print("current_ratio:\n",               ticker_analysis.get_current_ratio())
     print("quick_ratio:\n",                 ticker_analysis.get_quick_ratio())
+    print("Report:\n",                      ticker_analysis.generate_report())
 
+    origin_report = ticker_analysis.generate_report()
+    report = CheckRules(origin_report)
+    checked_report = report.check_all()
+    html = checked_report.to_html()
 
+    print(html)
 
 if __name__ == '__main__':
     main()
