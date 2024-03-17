@@ -65,6 +65,10 @@ class AnalysisBase:
             elif ('        Total Long Term Investments' in header):
                 self.total_long_term_investments = self.balance_sheet.loc[i][1:-1]
 
+        # Assign to zero if item not found in balance sheet
+        if not hasattr(self, 'total_long_term_investments'):
+            self.total_long_term_investments = [0] * len(self.balance_sheet.loc[0][1:-1])
+
         # Cash flow 
         for i in range(self.cash_flow.shape[0]):
             header = self.cash_flow.loc[i][0]
@@ -78,7 +82,9 @@ class AnalysisBase:
                 self.st_debt_repayments = self.cash_flow.loc[i][1:-2]
             elif ('                Repayments for Long Term Debt' in header):
                 self.lt_debt_repayments = self.cash_flow.loc[i][1:-2]
-            elif ('        Cash Dividends and Interest Paid' in header):
+            elif ('        Cash Dividends and Interest Paid' in header): # Dividends paid case 1
+                self.dividends_paid = self.cash_flow.loc[i][1:-2]
+            elif ('        Cash Dividends Paid to Non-Controlling/Minority Interests' in header): # Dividends paid case 2
                 self.dividends_paid = self.cash_flow.loc[i][1:-2]
 
         # Operating and efficiency
@@ -94,7 +100,8 @@ class AnalysisBase:
                 s = self.operating_and_efficiency.loc[i][1:-3].replace('-', 0)
                 self.days_payables_outstanding = self.to_float64(s)
             elif ('Asset Turnover' in header):
-                self.asset_turnover = self.operating_and_efficiency.loc[i][1:-3]
+                s = self.operating_and_efficiency.loc[i][1:-3]
+                self.asset_turnover = self.to_float64(s)
             elif ('Gross Margin %' in header):
                 s = self.operating_and_efficiency.loc[i][1:-3]
                 self.gross_margin = self.to_float64(s)
@@ -340,6 +347,8 @@ class AnalysisBase:
         self.report = pd.concat([self.report, self.quick_ratio.rename('速动比率')], axis=1) 
 
         self.report = self.report.sort_index()
+
+        # Turn to a row base table for manual review
         self.report = self.report.transpose()
         return self.report
 
@@ -350,40 +359,263 @@ class CheckRules():
     def __init__(self, report):
         self.report = report
         self.rules = [
-            self.rule_a1#, rule_a2, rule_a3, rule_a4, rule_a5
+            self.rule_a1, self.rule_a2, self.rule_a3, self.rule_a4, self.rule_a5,
+            self.rule_b1, self.rule_b2, self.rule_b3,
+            self.rule_c1,
+            self.rule_d1, self.rule_d2,
+            self.rule_e1, self.rule_e2,
         ]
 
-    def rule_a1(self):
+    def rule_a1(self, row):
         '''
         R.A1 [MUST] 现金流动负债比率 > 100%
         '''
-        self.report = self.report.style.applymap(
-            lambda x: 'color: red;' if x < 1 else 'color: blue;', subset=['现金流动负债比率'])
+        styles = []
+        if row.name == '现金流动负债比率':
+            for col, val in row.items():
+                if pd.isnull(val):
+                    styles.append('')
+                elif val > 1.0: # Pass case
+                    styles.append('color: blue')
+                else: # Fail case
+                    styles.append('color: red')
+        else:
+            styles = [''] * len(row)
 
-    def rule_a2(self):
+        assert len(styles) == len(row), "Styles length error"
+        return styles
+
+    def rule_a2(self, row):
         '''
         R.A2 [MUST] 现金流量允当比率 > 100%
         '''
-        pass
+        styles = []
+        if row.name == '现金流量允当比率':
+            for col, val in row.items():
+                if pd.isnull(val):
+                    styles.append('')
+                elif val > 1.0: # Pass case
+                    styles.append('color: blue')
+                else: # Fail case
+                    styles.append('color: red')
+        else:
+            styles = [''] * len(row)
+
+        assert len(styles) == len(row), "Styles length error"
+        return styles
     
-    def rule_a3(self):
+    def rule_a3(self, row):
         '''
         R.A3 [MUST] 现金再投资比率 > 10%
         '''
-        pass
+        styles = []
+        if row.name == '现金再投资比率':
+            for col, val in row.items():
+                if pd.isnull(val):
+                    styles.append('')
+                elif val > 0.1: # Pass case
+                    styles.append('color: blue')
+                else: # Fail case
+                    styles.append('color: red')
+        else:
+            styles = [''] * len(row)
 
-    def rule_a4(self):
+        assert len(styles) == len(row), "Styles length error"
+        return styles
+
+    def rule_a4(self, row):
         '''
         R.A4 [MUST] 现金占总资产比率 10~25%
         '''
-        pass
+        styles = []
+        if row.name == '现金占总资产比率':
+            for col, val in row.items():
+                if pd.isnull(val):
+                    styles.append('')
+                elif val > 0.1 and val < 0.25: # Pass case
+                    styles.append('color: blue')
+                else: # Fail case
+                    styles.append('color: red')
+        else:
+            styles = [''] * len(row)
 
-    def rule_a5(self):
+        assert len(styles) == len(row), "Styles length error"
+        return styles
+
+    def rule_a5(self, row):
         '''
         R.A5 [MUST] 平均收现天数，没有增加的趋势
         '''
-        pass
+        styles = []
+        if row.name == '平均收现天数':
+            # Fit with y = k*x + b
+            index = [float(i) for i in row.index.tolist()]
+            values = [float(i) for i in row.values]
+            k, b = np.polyfit(index, values, 1)
+            if k > 0.2:
+                styles = ['background-color: yellow'] * len(row)
+            else:
+                styles = ['background-color: rgb(174, 221, 129)'] * len(row)
+        else:
+            styles = [''] * len(row)
 
+        assert len(styles) == len(row), "Styles length error"
+        return styles
+
+    def rule_b1(self, row):
+        '''
+        R.B1 [NTH] 资产周转率 > 1
+        '''
+        styles = []
+        if row.name == '资产周转率':
+            for col, val in row.items():
+                if pd.isnull(val):
+                    styles.append('')
+                elif val > 1 : # Pass case
+                    styles.append('color: blue')
+                else: # Fail case
+                    styles.append('color: red')
+        else:
+            styles = [''] * len(row)
+
+        assert len(styles) == len(row), "Styles length error"
+        return styles
+    
+    def rule_b2(self, row):
+        '''
+        R.B2 [MUST] 平均销货天数，没有增加的趋势  
+        '''
+        styles = []
+        if row.name == '平均销货天数':
+            # Fit with y = k*x + b
+            index = [float(i) for i in row.index.tolist()]
+            values = [float(i) for i in row.values]
+            k, b = np.polyfit(index, values, 1)
+            if k > 0.2:
+                styles = ['background-color: yellow'] * len(row)
+            else:
+                styles = ['background-color: rgb(174, 221, 129)'] * len(row)
+        else:
+            styles = [''] * len(row)
+
+        assert len(styles) == len(row), "Styles length error"
+        return styles
+    
+    def rule_b3(self, row):
+        '''
+        R.B3 [MUST] 生意完整周期，没有增加的趋势
+        '''
+        styles = []
+        if row.name == '生意完整周期':
+            # Fit with y = k*x + b
+            index = [float(i) for i in row.index.tolist()]
+            values = [float(i) for i in row.values]
+            k, b = np.polyfit(index, values, 1)
+            if k > 0.2:
+                styles = ['background-color: yellow'] * len(row)
+            else:
+                styles = ['background-color: rgb(174, 221, 129)'] * len(row)
+        else:
+            styles = [''] * len(row)
+
+        assert len(styles) == len(row), "Styles length error"
+        return styles
+    
+    def rule_c1(self, row):
+        '''
+        R.C1 [MUST] 营业毛利率 > 30%
+        '''
+        styles = []
+        if row.name == '营业毛利率':
+            for col, val in row.items():
+                if pd.isnull(val):
+                    styles.append('')
+                elif val > 0.3 : # Pass case
+                    styles.append('color: blue')
+                else: # Fail case
+                    styles.append('color: red')
+        else:
+            styles = [''] * len(row)
+
+        assert len(styles) == len(row), "Styles length error"
+        return styles
+
+    def rule_d1(self, row):
+        '''
+        R.D1 [MUST] 资产负债率 < 60%
+        '''
+        styles = []
+        if row.name == '资产负债率':
+            for col, val in row.items():
+                if pd.isnull(val):
+                    styles.append('')
+                elif val < 0.6 : # Pass case
+                    styles.append('color: blue')
+                else: # Fail case
+                    styles.append('color: red')
+        else:
+            styles = [''] * len(row)
+
+        assert len(styles) == len(row), "Styles length error"
+        return styles
+    
+    def rule_d2(self, row):
+        '''
+        R.D2 [MUST] 长期资产合适率 > 150%
+        '''
+        styles = []
+        if row.name == '长期资产合适率':
+            for col, val in row.items():
+                if pd.isnull(val):
+                    styles.append('')
+                elif val > 1.5 : # Pass case
+                    styles.append('color: blue')
+                else: # Fail case
+                    styles.append('color: red')
+        else:
+            styles = [''] * len(row)
+
+        assert len(styles) == len(row), "Styles length error"
+        return styles
+
+    def rule_e1(self, row):
+        '''
+        R.E1 [MUST] 流动比率 > 300%
+        '''
+        styles = []
+        if row.name == '流动比率':
+            for col, val in row.items():
+                if pd.isnull(val):
+                    styles.append('')
+                elif val > 3.0 : # Pass case
+                    styles.append('color: blue')
+                else: # Fail case
+                    styles.append('color: red')
+        else:
+            styles = [''] * len(row)
+
+        assert len(styles) == len(row), "Styles length error"
+        return styles
+
+    def rule_e2(self, row):
+        '''
+        R.E2 [MUST] 速动比率 > 150%
+        '''
+        styles = []
+        if row.name == '速动比率':
+            for col, val in row.items():
+                if pd.isnull(val):
+                    styles.append('')
+                elif val > 1.5 : # Pass case
+                    styles.append('color: blue')
+                else: # Fail case
+                    styles.append('color: red')
+        else:
+            styles = [''] * len(row)
+
+        assert len(styles) == len(row), "Styles length error"
+        return styles
+    
     def check_all(self):
         '''
         应用所有分析规则
@@ -392,10 +624,12 @@ class CheckRules():
         Returns:
             Report with abnormal data highlight, pandas.DataFrame.style
         '''
+        styler = self.report.style
         for func in self.rules:
-            func()
+            styler = styler.apply(func, axis=1)
 
-        return self.report
+        #styled_report = self.report.style.apply(self.rule_a1, axis=1)
+        return styler
 
 def main():
     parser = OptionParser()
@@ -411,27 +645,27 @@ def main():
 
     # Temp test code
     ticker_analysis = AnalysisBase(opts.database, opts.ticker)
-    print("cash_flow_ratio:\n",             ticker_analysis.get_cash_flow_ratio())
-    print("cash_flow_adequancy_ratio:\n",   ticker_analysis.get_cash_flow_adequancy_ratio())
-    print("cash_reinvestment_ratio:\n",     ticker_analysis.get_cash_reinvestment_ratio())
-    print("cash_to_total_assets_ratio:\n",  ticker_analysis.get_cash_to_total_assets_ratio())
-    print("days_sales_outstanding:\n",      ticker_analysis.get_days_sales_outstanding())
-    print("days_inventory_outstanding:\n",  ticker_analysis.get_days_inventory_outstanding())
-    print("days_payables_outstanding:\n",   ticker_analysis.get_days_payables_outstanding())
-    print("cash_conversion_cycle:\n",       ticker_analysis.get_cash_conversion_cycle())
-    print("operating_cycle:\n",             ticker_analysis.get_operating_cycle())
-    print("asset_turnover:\n",              ticker_analysis.get_asset_turnover())
-    print("gross_margin:\n",                ticker_analysis.get_gross_margin())
-    print("operating_margin:\n",            ticker_analysis.get_operating_margin())
-    print("operation_safety_margin:\n",     ticker_analysis.get_operation_safety_margin())
-    print("net_margin:\n",                  ticker_analysis.get_net_margin())
-    print("eps:\n",                         ticker_analysis.get_eps())
-    print("roe:\n",                         ticker_analysis.get_roe())
-    print("debt_ratio:\n",                  ticker_analysis.get_debt_ratio())
-    print("long_term_ratio:\n",             ticker_analysis.get_fixed_assets_to_long_term_liabilities_ratio())
-    print("current_ratio:\n",               ticker_analysis.get_current_ratio())
-    print("quick_ratio:\n",                 ticker_analysis.get_quick_ratio())
-    print("Report:\n",                      ticker_analysis.generate_report())
+#    print("cash_flow_ratio:\n",             ticker_analysis.get_cash_flow_ratio())
+#    print("cash_flow_adequancy_ratio:\n",   ticker_analysis.get_cash_flow_adequancy_ratio())
+#    print("cash_reinvestment_ratio:\n",     ticker_analysis.get_cash_reinvestment_ratio())
+#    print("cash_to_total_assets_ratio:\n",  ticker_analysis.get_cash_to_total_assets_ratio())
+#    print("days_sales_outstanding:\n",      ticker_analysis.get_days_sales_outstanding())
+#    print("days_inventory_outstanding:\n",  ticker_analysis.get_days_inventory_outstanding())
+#    print("days_payables_outstanding:\n",   ticker_analysis.get_days_payables_outstanding())
+#    print("cash_conversion_cycle:\n",       ticker_analysis.get_cash_conversion_cycle())
+#    print("operating_cycle:\n",             ticker_analysis.get_operating_cycle())
+#    print("asset_turnover:\n",              ticker_analysis.get_asset_turnover())
+#    print("gross_margin:\n",                ticker_analysis.get_gross_margin())
+#    print("operating_margin:\n",            ticker_analysis.get_operating_margin())
+#    print("operation_safety_margin:\n",     ticker_analysis.get_operation_safety_margin())
+#    print("net_margin:\n",                  ticker_analysis.get_net_margin())
+#    print("eps:\n",                         ticker_analysis.get_eps())
+#    print("roe:\n",                         ticker_analysis.get_roe())
+#    print("debt_ratio:\n",                  ticker_analysis.get_debt_ratio())
+#    print("long_term_ratio:\n",             ticker_analysis.get_fixed_assets_to_long_term_liabilities_ratio())
+#    print("current_ratio:\n",               ticker_analysis.get_current_ratio())
+#    print("quick_ratio:\n",                 ticker_analysis.get_quick_ratio())
+#    print("Report:\n",                      ticker_analysis.generate_report())
 
     origin_report = ticker_analysis.generate_report()
     report = CheckRules(origin_report)
