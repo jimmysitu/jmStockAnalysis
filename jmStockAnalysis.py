@@ -628,7 +628,6 @@ class CheckRules():
         for func in self.rules:
             styler = styler.apply(func, axis=1)
 
-        #styled_report = self.report.style.apply(self.rule_a1, axis=1)
         return styler
 
 def main():
@@ -645,6 +644,8 @@ def main():
 
     # Temp test code
     ticker_analysis = AnalysisBase(opts.database, opts.ticker)
+
+# Unit Test Case
 #    print("cash_flow_ratio:\n",             ticker_analysis.get_cash_flow_ratio())
 #    print("cash_flow_adequancy_ratio:\n",   ticker_analysis.get_cash_flow_adequancy_ratio())
 #    print("cash_reinvestment_ratio:\n",     ticker_analysis.get_cash_reinvestment_ratio())
@@ -670,6 +671,9 @@ def main():
     origin_report = ticker_analysis.generate_report()
     report = CheckRules(origin_report)
     checked_report = report.check_all()
+
+    # Format and keep 2 decimal places
+    checked_report = checked_report.format("{:.2f}")
     html = checked_report.to_html()
 
     print(html)
