@@ -530,7 +530,7 @@ class CheckRules():
             for col, val in row.items():
                 if pd.isnull(val):
                     styles.append('')
-                elif val > 0.3 : # Pass case
+                elif val > 30 : # Pass case
                     styles.append('color: blue')
                 else: # Fail case
                     styles.append('color: red')
