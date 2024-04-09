@@ -119,10 +119,14 @@ class AnalysisBase:
         for i in range(self.financial_health.shape[0]):
             header = self.financial_health.loc[i][0]
             if ('Current Ratio' in header):
-                self.current_ratio = self.financial_health.loc[i][1:-2]
+                s = self.financial_health.loc[i][1:-2]
+                self.current_ratio  = self.to_float64(s)
+                # Trim month in index, 'YYYY-MM' 
                 self.current_ratio.index = self.current_ratio.index.str.replace(r'-..', '', regex=True)
             elif ('Quick Ratio' in header):
-                self.quick_ratio = self.financial_health.loc[i][1:-2]
+                s = self.financial_health.loc[i][1:-2]
+                self.quick_ratio = self.to_float64(s)
+                # Trim month in index, 'YYYY-MM' 
                 self.quick_ratio.index = self.quick_ratio.index.str.replace(r'-..', '', regex=True)
 
         # Initial all ratio
@@ -366,6 +370,10 @@ class CheckRules():
             self.rule_e1, self.rule_e2,
         ]
 
+        self.style_normal  = 'background-color: #e8f5e9; color: #388e3c'
+        self.style_warning = 'background-color: #fff9c4; color: #ef6c00'
+        self.style_failure = 'background-color: #ffcdd2; color: #c62828'
+
     def rule_a1(self, row):
         '''
         R.A1 [MUST] 现金流动负债比率 > 100%
@@ -376,9 +384,9 @@ class CheckRules():
                 if pd.isnull(val):
                     styles.append('')
                 elif val > 1.0: # Pass case
-                    styles.append('color: blue')
+                    styles.append(self.style_normal)
                 else: # Fail case
-                    styles.append('color: red')
+                    styles.append(self.style_failure)
         else:
             styles = [''] * len(row)
 
@@ -395,9 +403,9 @@ class CheckRules():
                 if pd.isnull(val):
                     styles.append('')
                 elif val > 1.0: # Pass case
-                    styles.append('color: blue')
+                    styles.append(self.style_normal)
                 else: # Fail case
-                    styles.append('color: red')
+                    styles.append(self.style_failure)
         else:
             styles = [''] * len(row)
 
@@ -414,9 +422,9 @@ class CheckRules():
                 if pd.isnull(val):
                     styles.append('')
                 elif val > 0.1: # Pass case
-                    styles.append('color: blue')
+                    styles.append(self.style_normal)
                 else: # Fail case
-                    styles.append('color: red')
+                    styles.append(self.style_failure)
         else:
             styles = [''] * len(row)
 
@@ -433,9 +441,9 @@ class CheckRules():
                 if pd.isnull(val):
                     styles.append('')
                 elif val > 0.1 and val < 0.25: # Pass case
-                    styles.append('color: blue')
+                    styles.append(self.style_normal)
                 else: # Fail case
-                    styles.append('color: red')
+                    styles.append(self.style_failure)
         else:
             styles = [''] * len(row)
 
@@ -453,9 +461,9 @@ class CheckRules():
             values = [float(i) for i in row.values]
             k, b = np.polyfit(index, values, 1)
             if k > 0.2:
-                styles = ['background-color: yellow'] * len(row)
+                styles = [self.style_warning] * len(row)
             else:
-                styles = ['background-color: rgb(174, 221, 129)'] * len(row)
+                styles = [self.style_normal] * len(row)
         else:
             styles = [''] * len(row)
 
@@ -472,9 +480,9 @@ class CheckRules():
                 if pd.isnull(val):
                     styles.append('')
                 elif val > 1 : # Pass case
-                    styles.append('color: blue')
+                    styles.append(self.style_normal)
                 else: # Fail case
-                    styles.append('color: red')
+                    styles.append(self.style_failure)
         else:
             styles = [''] * len(row)
 
@@ -492,9 +500,9 @@ class CheckRules():
             values = [float(i) for i in row.values]
             k, b = np.polyfit(index, values, 1)
             if k > 0.2:
-                styles = ['background-color: yellow'] * len(row)
+                styles = [self.style_warning] * len(row)
             else:
-                styles = ['background-color: rgb(174, 221, 129)'] * len(row)
+                styles = [self.style_normal] * len(row)
         else:
             styles = [''] * len(row)
 
@@ -512,9 +520,9 @@ class CheckRules():
             values = [float(i) for i in row.values]
             k, b = np.polyfit(index, values, 1)
             if k > 0.2:
-                styles = ['background-color: yellow'] * len(row)
+                styles = [self.style_warning] * len(row)
             else:
-                styles = ['background-color: rgb(174, 221, 129)'] * len(row)
+                styles = [self.style_normal] * len(row)
         else:
             styles = [''] * len(row)
 
@@ -531,9 +539,9 @@ class CheckRules():
                 if pd.isnull(val):
                     styles.append('')
                 elif val > 30 : # Pass case
-                    styles.append('color: blue')
+                    styles.append(self.style_normal)
                 else: # Fail case
-                    styles.append('color: red')
+                    styles.append(self.style_failure)
         else:
             styles = [''] * len(row)
 
@@ -550,9 +558,9 @@ class CheckRules():
                 if pd.isnull(val):
                     styles.append('')
                 elif val < 0.6 : # Pass case
-                    styles.append('color: blue')
+                    styles.append(self.style_normal)
                 else: # Fail case
-                    styles.append('color: red')
+                    styles.append(self.style_failure)
         else:
             styles = [''] * len(row)
 
@@ -569,9 +577,9 @@ class CheckRules():
                 if pd.isnull(val):
                     styles.append('')
                 elif val > 1.5 : # Pass case
-                    styles.append('color: blue')
+                    styles.append(self.style_normal)
                 else: # Fail case
-                    styles.append('color: red')
+                    styles.append(self.style_failure)
         else:
             styles = [''] * len(row)
 
@@ -588,9 +596,9 @@ class CheckRules():
                 if pd.isnull(val):
                     styles.append('')
                 elif val > 3.0 : # Pass case
-                    styles.append('color: blue')
+                    styles.append(self.style_normal)
                 else: # Fail case
-                    styles.append('color: red')
+                    styles.append(self.style_failure)
         else:
             styles = [''] * len(row)
 
@@ -607,9 +615,9 @@ class CheckRules():
                 if pd.isnull(val):
                     styles.append('')
                 elif val > 1.5 : # Pass case
-                    styles.append('color: blue')
+                    styles.append(self.style_normal)
                 else: # Fail case
-                    styles.append('color: red')
+                    styles.append(self.style_failure)
         else:
             styles = [''] * len(row)
 
@@ -672,10 +680,23 @@ def main():
     report = CheckRules(origin_report)
     checked_report = report.check_all()
 
-    # Format and keep 2 decimal places
-    checked_report = checked_report.format("{:.2f}")
-    html = checked_report.to_html()
 
+    # Output style control
+    ## Format and keep 2 decimal places, NaN to '-'
+    checked_report = checked_report.format("{:.2f}", na_rep='-')
+
+    ## Set table style
+    table_styles = [
+        dict(selector="th", props=[
+             ("font-size", "110%"), ("text-align", "center")]),
+        dict(selector="td", props=[("text-align", "center")]),
+        #dict(selector="table, th, td", props=[("border", "1px solid black")]),
+        #dict(selector="table", props=[("border-collapse", "collapse")])
+    ]
+    checked_report = checked_report.set_table_styles(table_styles, overwrite=False)
+    
+    # Render to html 
+    html = checked_report.to_html()
     print(html)
 
 if __name__ == '__main__':
