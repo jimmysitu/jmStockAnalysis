@@ -67,7 +67,12 @@ class AnalysisBase:
 
         # Assign to zero if item not found in balance sheet
         if not hasattr(self, 'total_long_term_investments'):
-            self.total_long_term_investments = [0] * len(self.balance_sheet.loc[0][1:-1])
+            self.total_long_term_investments = \
+                pd.Series(0, index=self.balance_sheet.loc[0][1:-1].index)
+
+        if not hasattr(self, 'inventories'):
+                self.inventories = pd.Series(0, index=self.balance_sheet.loc[0][1:-1].index)
+                self.inventories_increase = self.inventories[-1] - self.inventories[-5]
 
         # Cash flow 
         for i in range(self.cash_flow.shape[0]):
@@ -86,6 +91,10 @@ class AnalysisBase:
                 self.dividends_paid = self.cash_flow.loc[i][1:-2]
             elif ('        Cash Dividends Paid to Non-Controlling/Minority Interests' in header): # Dividends paid case 2
                 self.dividends_paid = self.cash_flow.loc[i][1:-2]
+        
+        ## Assign to zeros if item is not found in cash flow 
+        if not hasattr(self, 'dividends_paid'):
+            self.dividends_paid = pd.Series(0, index=self.cash_flow.loc[0][1:-2].index)
 
         # Operating and efficiency
         for i in range(self.operating_and_efficiency.shape[0]):
@@ -691,9 +700,18 @@ def main():
              ("font-size", "110%"), ("text-align", "center")]),
         dict(selector="td", props=[("text-align", "center")]),
         #dict(selector="table, th, td", props=[("border", "1px solid black")]),
-        #dict(selector="table", props=[("border-collapse", "collapse")])
+        #dict(selector="table", props=[("border-collapse", "collapse")]),
+        # Set caption
+        dict(selector="caption", props=[
+            ("caption-side", "top"),
+            ("font-size", "150%"),
+            ("font-weight", "bold"),
+            ("text-align", "center"),  
+            ("margin", "20px 0 20px 0")
+        ])
     ]
     checked_report = checked_report.set_table_styles(table_styles, overwrite=False)
+    checked_report = checked_report.set_caption(opts.ticker)
     
     # Render to html 
     html = checked_report.to_html()
