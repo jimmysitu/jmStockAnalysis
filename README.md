@@ -1,4 +1,9 @@
-# <center>Jimmy's Stock Analysis</center> <!-- omit in toc -->
+---
+layout: page
+title: About
+permalink: /about/
+---
+# <center>JM's Stock Analysis</center> <!-- omit in toc -->
 
 ## 1. 财务指标定义 (Definition)
 ### 1.1. 现金流动负债比率 (Cash Flow Ratio)
