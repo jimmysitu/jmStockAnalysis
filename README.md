@@ -1,8 +1,3 @@
----
-layout: page
-title: About
-permalink: /about/
----
 # <center>JM's Stock Analysis</center> <!-- omit in toc -->
 
 ## 1. 财务指标定义 (Definition)
