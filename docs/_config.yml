@@ -34,7 +34,7 @@ plugins:
 
 
 # Customize navigation links
- header_pages:
+header_pages:
   - about.md
   - reports.md
 
