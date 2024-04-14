@@ -33,7 +33,7 @@ plugins:
   - jekyll-feed
 
 
- Customize navigation links
+# Customize navigation links
  header_pages:
   - about.md
   - reports.md
