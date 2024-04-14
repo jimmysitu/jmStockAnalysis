@@ -3,9 +3,11 @@
 # To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
 
 layout: home
-title: JM's Stock Analysis
 ---
 
 ## AN ATM
 - [Tesla](reports/tsla)
+
+
+## GATAFA
 - [Google](reports/googl)

@@ -699,7 +699,10 @@ def main():
         dict(selector="table", props=[("width", "100%")]),
         
         dict(selector="th", props=[
-             ("font-size", "110%"), ("text-align", "center")]),
+            ("font-size", "100%"),
+            ("text-align", "center"),
+            ("font-weight", "bold"),
+        ]),
 
         # 1st col header with 20%
         dict(selector="th:nth-child(1)", props=[("width", "20%")]),
