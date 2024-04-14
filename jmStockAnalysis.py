@@ -696,11 +696,19 @@ def main():
 
     ## Set table style
     table_styles = [
+        dict(selector="table", props=[("width", "100%")]),
+        
         dict(selector="th", props=[
              ("font-size", "110%"), ("text-align", "center")]),
+
+        # 1st col header with 20%
+        dict(selector="th:nth-child(1)", props=[("width", "20%")]),
+        
+        # other header with 20%
+        dict(selector="th:not(:first-child)", props=[("width", "8%")]), 
+        
         dict(selector="td", props=[("text-align", "center")]),
         #dict(selector="table, th, td", props=[("border", "1px solid black")]),
-        #dict(selector="table", props=[("border-collapse", "collapse")]),
         # Set caption
         dict(selector="caption", props=[
             ("caption-side", "top"),
