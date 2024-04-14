@@ -696,7 +696,10 @@ def main():
 
     ## Set table style
     table_styles = [
-        dict(selector="table", props=[("width", "100%")]),
+        dict(selector="table", props=[
+            ("width", "100%"),
+            ("table-layout", 'fixed'),
+        ]),
         
         dict(selector="th", props=[
             ("font-size", "100%"),
