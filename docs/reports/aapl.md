@@ -1,10 +1,8 @@
 ---
-layout: page
 title: AAPL
-permalink: /reports/aapl.md
+permalink: /reports/aapl
 ---
 
-<html>
 <style type="text/css">
 #T_f03f4 th {
   font-size: 110%;
@@ -313,4 +311,3 @@ permalink: /reports/aapl.md
     </tr>
   </tbody>
 </table>
-<html>
