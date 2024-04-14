@@ -1,6 +1,5 @@
 ---
 title: AAPL
-permalink: /reports/aapl
 ---
 
 <style type="text/css">
