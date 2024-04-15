@@ -6,8 +6,14 @@ layout: home
 ---
 
 ## AN ATM
-- [Tesla](reports/tsla)
+<div>
+    {%- include reports/tsla.html -%}
+</div>
+
 
 
 ## GATAFA
-- [Google](reports/googl)
+
+<div>
+    {%- include reports/googl.html -%}
+</div>

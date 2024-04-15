@@ -698,6 +698,9 @@ def main():
     table_styles = [
         dict(selector="table", props=[
             ("width", "100%"),
+            ("max-width", "100%"),
+            ("min-width", "100%"),
+            ("border-collapse", "collapse"),
             ("table-layout", 'fixed'),
         ]),
         
@@ -715,6 +718,9 @@ def main():
         
         dict(selector="td", props=[("text-align", "center")]),
         #dict(selector="table, th, td", props=[("border", "1px solid black")]),
+        
+        dict(selector="th, td", props=[("padding", "1px 1px")]),
+        
         # Set caption
         dict(selector="caption", props=[
             ("caption-side", "top"),
