@@ -738,7 +738,10 @@ def main():
     
     # Render to html 
     html = checked_report.to_html()
-    print(html)
+
+    with open(opts.output, 'w') as file:
+        file.write(html)
+
 
 if __name__ == '__main__':
     main()

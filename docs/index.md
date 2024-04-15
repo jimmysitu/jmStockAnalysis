@@ -14,7 +14,7 @@ layout: home
 
 ## [AN ATM](AN_ATM)
 - **A**SML
-- **N**Nvidia
-- **A**Aple
+- **N**vidia
+- **A**pple
 - **T**esla
 - **M**icrosoft
