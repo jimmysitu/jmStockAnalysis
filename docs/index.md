@@ -5,11 +5,12 @@
 layout: home
 ---
 # 投资组合
-## [GATAFA](GATAFA)
+## [GAFATA](GAFATA)
 - **G**oogle
 - **A**pple
-- **T**encent
+- **F**acebook(Meta)
 - **A**amzon
+- **T**encent
 - **A**libaba
 
 ## [AN ATM](AN_ATM)
