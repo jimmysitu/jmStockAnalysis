@@ -653,6 +653,9 @@ def main():
     parser.add_option("-t", "--ticker",
                 action="store", dest="ticker",
                 help="Stock ticker")
+    parser.add_option("-o", "--output",
+                action="store", dest="output",
+                help="output html")
     parser.add_option("--db", "--database",
                 action="store", dest="database",
                 help="Finance database, which is saved by msfinance")

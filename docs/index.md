@@ -4,16 +4,17 @@
 
 layout: home
 ---
+# 投资组合
+## [GATAFA](GATAFA)
+- **G**oogle
+- **A**pple
+- **T**encent
+- **A**amzon
+- **A**libaba
 
-## AN ATM
-<div>
-    {%- include reports/tsla.html -%}
-</div>
-
-
-
-## GATAFA
-
-<div>
-    {%- include reports/googl.html -%}
-</div>
+## [AN ATM](AN_ATM)
+- **A**SML
+- **N**Nvidia
+- **A**Aple
+- **T**esla
+- **M**icrosoft
