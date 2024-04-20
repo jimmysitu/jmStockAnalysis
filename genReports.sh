@@ -1,0 +1,24 @@
+#!/bin/bash
+
+OUT_PATH=docs/_includes/reports
+
+# GATAFA
+./jmStockAnalysis.py --db sp500.db3 -t GOOGL    -o $OUT_PATH/googl.html
+./jmStockAnalysis.py --db sp500.db3 -t AAPL     -o $OUT_PATH/aapl.html
+./jmStockAnalysis.py --db hsi.db3   -t 00700    -o $OUT_PATH/00700.html
+./jmStockAnalysis.py --db sp500.db3 -t AMZN     -o $OUT_PATH/amzn.html
+./jmStockAnalysis.py --db sp500.db3 -t META     -o $OUT_PATH/meta.html
+./jmStockAnalysis.py --db sp500.db3 -t AAPL     -o $OUT_PATH/aapl.html
+./jmStockAnalysis.py --db hsi.db3   -t 09988    -o $OUT_PATH/09988.html
+
+# AN ATM
+./jmStockAnalysis.py --db xnas.db3  -t ASML     -o $OUT_PATH/asml.html
+./jmStockAnalysis.py --db sp500.db3 -t NVDA     -o $OUT_PATH/nvda.html
+
+./jmStockAnalysis.py --db sp500.db3 -t AAPL     -o $OUT_PATH/aapl.html
+./jmStockAnalysis.py --db sp500.db3 -t TSLA     -o $OUT_PATH/tsla.html
+./jmStockAnalysis.py --db sp500.db3 -t MSFT     -o $OUT_PATH/msft.html
+
+# CPU in XSHG
+./jmStockAnalysis.py --db xshg.db3 -t 688041    -o $OUT_PATH/688041.html
+./jmStockAnalysis.py --db xshg.db3 -t 688047    -o $OUT_PATH/688047.html
