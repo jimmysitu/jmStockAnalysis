@@ -3,13 +3,14 @@
 # To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
 
 layout: home
+title: 投资组合
 ---
-# 投资组合
+
 ## [GAFATA](GAFATA)
 - **G**oogle
 - **A**pple
 - **F**acebook(Meta)
-- **A**amzon
+- **A**amzo             n
 - **T**encent
 - **A**libaba
 
@@ -19,3 +20,7 @@ layout: home
 - **A**pple
 - **T**esla
 - **M**icrosoft
+
+## [HL](HL)
+- **H**ygon
+- **L**oogson
