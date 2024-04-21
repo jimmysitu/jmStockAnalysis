@@ -10,7 +10,7 @@ title: 投资组合
 - **G**oogle
 - **A**pple
 - **F**acebook(Meta)
-- **A**amzo             n
+- **A**amzon
 - **T**encent
 - **A**libaba
 
