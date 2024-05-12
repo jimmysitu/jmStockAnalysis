@@ -21,6 +21,11 @@ title: 投资组合
 - **T**esla
 - **M**icrosoft
 
+## [JM's Magic Water](MAGIC_WATER)
+- Starbucks, coffee shop
+- Monster Beverage, drinks
+- Coca-Cola, drinks
+
 ## [HL](HL)
 - **H**ygon
 - **L**oogson

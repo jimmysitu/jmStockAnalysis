@@ -22,3 +22,11 @@ OUT_PATH=docs/_includes/reports
 # CPU in XSHG
 ./jmStockAnalysis.py --db xshg.db3 -t 688041    -o $OUT_PATH/688041.html
 ./jmStockAnalysis.py --db xshg.db3 -t 688047    -o $OUT_PATH/688047.html
+
+# JM's Magic Water
+# Starbucks, coffee shop
+./jmStockAnalysis.py --db sp500.db3 -t SBUX     -o $OUT_PATH/sbux.html
+# Monster Beverage
+./jmStockAnalysis.py --db sp500.db3 -t MNST     -o $OUT_PATH/mnst.html
+# Coca-Cola, drinks
+./jmStockAnalysis.py --db sp500.db3 -t KO       -o $OUT_PATH/ko.html
