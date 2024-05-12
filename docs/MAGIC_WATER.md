@@ -1,5 +1,6 @@
 ---
 layout: home
+title: JM's Magic Water
 ---
 
 ## Starbucks 
