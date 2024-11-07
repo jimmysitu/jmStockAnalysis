@@ -26,6 +26,8 @@ title: 投资组合
 - Monster Beverage, drinks
 - Coca-Cola, drinks
 
-## [HL](HL)
-- **H**ygon
-- **L**oogson
+## [CPU](CPU)
+- Hygon
+- Loogson
+- AMD
+- Intel
