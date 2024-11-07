@@ -19,6 +19,10 @@ OUT_PATH=docs/_includes/reports
 ./jmStockAnalysis.py --db sp500.db3 -t TSLA     -o $OUT_PATH/tsla.html
 ./jmStockAnalysis.py --db sp500.db3 -t MSFT     -o $OUT_PATH/msft.html
 
+# CPU in XNAS
+./jmStockAnalysis.py --db sp500.db3 -t INTC     -o $OUT_PATH/intc.html
+./jmStockAnalysis.py --db sp500.db3 -t AMD      -o $OUT_PATH/amd.html
+
 # CPU in XSHG
 ./jmStockAnalysis.py --db xshg.db3 -t 688041    -o $OUT_PATH/688041.html
 ./jmStockAnalysis.py --db xshg.db3 -t 688047    -o $OUT_PATH/688047.html
