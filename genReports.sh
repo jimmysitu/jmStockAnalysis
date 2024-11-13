@@ -34,3 +34,7 @@ OUT_PATH=docs/_includes/reports
 ./jmStockAnalysis.py --db sp500.db3 -t MNST     -o $OUT_PATH/mnst.html
 # Coca-Cola, drinks
 ./jmStockAnalysis.py --db sp500.db3 -t KO       -o $OUT_PATH/ko.html
+
+
+# Watching List
+./jmStockAnalysis.py --db sp500.db3 -t NFLX     -o $OUT_PATH/nflx.html
