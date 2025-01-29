@@ -26,12 +26,14 @@ class AnalysisBase:
                 self.cash_flow = pd.read_sql_query(query, self.db)
 
             # 其他估值数据
+            elif '_financial_summary' in table_name:
+                self.financial_summary = pd.read_sql_query(query, self.db)
             elif '_growth' in table_name:
                 self.growth = pd.read_sql_query(query, self.db)
             elif '_financial_health' in table_name:
                 self.financial_health = pd.read_sql_query(query, self.db)
-            elif '_operating_and_efficiency' in table_name:
-                self.operating_and_efficiency = pd.read_sql_query(query, self.db)
+            elif '_profitability_and_efficiency' in table_name:
+                self.profitability_and_efficiency = pd.read_sql_query(query, self.db)
 
         # 提取财报原始数据
         # Income statement
@@ -96,32 +98,36 @@ class AnalysisBase:
         if not hasattr(self, 'dividends_paid'):
             self.dividends_paid = pd.Series(0, index=self.cash_flow.loc[0][1:-2].index)
 
-        # Operating and efficiency
-        for i in range(self.operating_and_efficiency.shape[0]):
-            header = self.operating_and_efficiency.loc[i][0]
-            if ('Days Sales Outstanding' in header):
-                s = self.operating_and_efficiency.loc[i][1:-3]
-                self.days_sales_outstanding = self.to_float64(s)
-            elif ('Days Inventory' in header):
-                s = self.operating_and_efficiency.loc[i][1:-3]
-                self.days_inventory_outstanding = self.to_float64(s)
-            elif ('Payables Period' in header):
-                s = self.operating_and_efficiency.loc[i][1:-3].replace('-', 0)
-                self.days_payables_outstanding = self.to_float64(s)
-            elif ('Asset Turnover' in header):
-                s = self.operating_and_efficiency.loc[i][1:-3]
-                self.asset_turnover = self.to_float64(s)
-            elif ('Gross Margin %' in header):
-                s = self.operating_and_efficiency.loc[i][1:-3]
+        # Financial summary
+        for i in range(self.financial_summary.shape[0]):
+            header = self.financial_summary.loc[i][0]
+            if ('Gross Profit Margin %' in header):
+                s = self.financial_summary.loc[i][1:-2]
                 self.gross_margin = self.to_float64(s)
             elif ('Operating Margin %' in header):
-                s = self.operating_and_efficiency.loc[i][1:-3]
+                s = self.financial_summary.loc[i][1:-2]
                 self.operating_margin = self.to_float64(s)
-            elif ('Net Margin %' in header):
-                s = self.operating_and_efficiency.loc[i][1:-3]
+            elif ('Net Profit Margin %' in header):
+                s = self.financial_summary.loc[i][1:-2]
                 self.net_margin = self.to_float64(s)
+        
+        # Profitability and efficiency
+        for i in range(self.profitability_and_efficiency.shape[0]):
+            header = self.profitability_and_efficiency.loc[i][0]
+            if ('Days Sales Outstanding' in header):
+                s = self.profitability_and_efficiency.loc[i][1:-3]
+                self.days_sales_outstanding = self.to_float64(s)
+            elif ('Days Inventory' in header):
+                s = self.profitability_and_efficiency.loc[i][1:-3]
+                self.days_inventory_outstanding = self.to_float64(s)
+            elif ('Payables Period' in header):
+                s = self.profitability_and_efficiency.loc[i][1:-3].replace('-', 0)
+                self.days_payables_outstanding = self.to_float64(s)
+            elif ('Asset Turnover' in header):
+                s = self.profitability_and_efficiency.loc[i][1:-3]
+                self.asset_turnover = self.to_float64(s)
             elif ('Return on Equity %' in header):
-                s = self.operating_and_efficiency.loc[i][1:-3]
+                s = self.profitability_and_efficiency.loc[i][1:-3]
                 self.return_on_equity = self.to_float64(s)
 
         # Financial Health
