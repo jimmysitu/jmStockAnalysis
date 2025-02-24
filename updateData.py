@@ -11,9 +11,12 @@ stock = msf.Stock(
 )
 
 tickers_list = {
-    'tsla', # Tesla
+    #'tsla', # Tesla
+    'intc', # Intel
+    'amd', # AMD
 }
 
+# XNAS
 for ticker in sorted(tickers_list):
     key_metrics = stock.get_key_metrics(ticker, 'xnas', update=True)
     financials = stock.get_financials(ticker, 'xnas', update=True)
