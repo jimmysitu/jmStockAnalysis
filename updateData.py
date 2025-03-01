@@ -12,8 +12,13 @@ stock = msf.Stock(
 
 tickers_list = {
     #'tsla', # Tesla
-    'intc', # Intel
-    'amd', # AMD
+    #'intc', # Intel
+    #'amd', # AMD
+    'googl', # Google
+    'msft', # Microsoft
+    'amzn', # Amazon
+    'nvda', # Nvidia
+    'nflx', # Netflix
 }
 
 # XNAS
