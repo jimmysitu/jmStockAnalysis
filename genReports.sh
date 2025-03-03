@@ -35,6 +35,13 @@ OUT_PATH=docs/_includes/reports
 # Coca-Cola, drinks
 ./jmStockAnalysis.py --db sp500.db3 -t KO       -o $OUT_PATH/ko.html
 
+# JM's Daily Life
+# Xiaomi
+./jmStockAnalysis.py --db hsi.db3 -t 01810    -o $OUT_PATH/01810.html
+# Meituan
+./jmStockAnalysis.py --db hsi.db3 -t 03690    -o $OUT_PATH/03690.html
+# JingDong
+./jmStockAnalysis.py --db hsi.db3 -t 09618    -o $OUT_PATH/09618.html
 
 # Watching List
 ./jmStockAnalysis.py --db sp500.db3 -t NFLX     -o $OUT_PATH/nflx.html

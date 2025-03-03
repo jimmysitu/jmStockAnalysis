@@ -26,6 +26,11 @@ title: 投资组合
 - Monster Beverage, drinks
 - Coca-Cola, drinks
 
+## [JM's Daily Life](DAILY_LIFE)
+- Xiaomi
+- Meituan
+- JingDong
+
 ## [CPU](CPU)
 - Hygon
 - Loogson
