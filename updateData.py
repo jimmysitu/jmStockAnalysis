@@ -19,8 +19,8 @@ tickers_list = {
     #'amzn', # Amazon
     #'nvda', # Nvidia
     #'nflx', # Netflix
-    'mnst', # Monster Beverage
-    'sbux', # Starbucks
+    #'mnst', # Monster Beverage
+    #'sbux', # Starbucks
 }
 
 # XNAS
